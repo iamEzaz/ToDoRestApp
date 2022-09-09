@@ -93,7 +93,7 @@ func updateOffice(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func InitialMigration() {
+func DataConnect() {
 	DB, err = gorm.Open(mysql.Open(DNS), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
@@ -109,23 +109,28 @@ func InitialMigration() {
 
 func middleware(handler http.HandlerFunc) http.HandlerFunc {
 	return func(response http.ResponseWriter, request *http.Request) {
-		fmt.Println("Hello Ezazul")
+		fmt.Println("Islam ")
 		handler.ServeHTTP(response, request)
 	}
 }
 
-
+func middlewaredo(handler http.HandlerFunc) http.HandlerFunc {
+	return func(response http.ResponseWriter, request *http.Request) {
+		fmt.Println("Ezazul")
+		handler.ServeHTTP(response, request)
+	}
+}
 func main() {
 
-	InitialMigration()
+	DataConnect()
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/offices", middleware(getOffices)).Methods("GET")
-	r.HandleFunc("/offices/{id}", middleware(getOffice)).Methods("GET")
-	r.HandleFunc("/offices", middleware(createOffice)).Methods("POST")
-	r.HandleFunc("/offices/{id}", middleware(updateOffice)).Methods("PUT")
-	r.HandleFunc("/offices/{id}", middleware(deleteOffice)).Methods("DELETE")
+	r.HandleFunc("/offices", middlewaredo(middleware(getOffices))).Methods("GET")
+	r.HandleFunc("/offices/{id}", middlewaredo(middleware(getOffice))).Methods("GET")
+	r.HandleFunc("/offices", middlewaredo(middleware(createOffice))).Methods("POST")
+	r.HandleFunc("/offices/{id}", middlewaredo(middleware(updateOffice))).Methods("PUT")
+	r.HandleFunc("/offices/{id}", middlewaredo(middleware(deleteOffice))).Methods("DELETE")
 
 	fmt.Println("Starting Server at Port 9000")
 	log.Fatal(http.ListenAndServe(":9000", r))
