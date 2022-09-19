@@ -8,6 +8,10 @@ import (
 	"net/http"
 	"strconv"
 
+	//"html"
+	//"github.com/joho/godotenv"
+	//"github.com/jinzhu/gorm"
+	//"github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -16,7 +20,7 @@ import (
 var DB *gorm.DB
 var err error
 
-const DNS = "root:ezaz@1234@tcp(127.0.0.1:3306)/todoapp?charset=utf8mb4&parseTime=True&loc=Local"
+const DNS = "root:ezaz@1234@tcp(host.docker.internal:3306)/todoapp?charset=utf8mb4&parseTime=True&loc=Local"
 
 type Office struct {
 	Id     string `json:"id"`
@@ -122,6 +126,14 @@ func middlewaredo(handler http.HandlerFunc) http.HandlerFunc {
 }
 func main() {
 
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+	// 	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+	// })
+
+	// http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request){
+	// 	fmt.Fprintf(w, "Hi")
+	// })
+
 	DataConnect()
 
 	r := mux.NewRouter()
@@ -132,6 +144,6 @@ func main() {
 	r.HandleFunc("/offices/{id}", middlewaredo(middleware(updateOffice))).Methods("PUT")
 	r.HandleFunc("/offices/{id}", middlewaredo(middleware(deleteOffice))).Methods("DELETE")
 
-	fmt.Println("Starting Server at Port 9000")
-	log.Fatal(http.ListenAndServe(":9000", r))
+	fmt.Println("Starting Server at Port 8080")
+	log.Fatal(http.ListenAndServe(":8081", r))
 }
